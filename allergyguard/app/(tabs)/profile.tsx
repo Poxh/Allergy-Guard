@@ -8,8 +8,8 @@ export default function TabTwoScreen() {
             <Image style={styles.image} source={require("../../assets/images/profile_picture.png")}></Image>
             <Text style={styles.name}>Sarah Schmidt</Text>
 
-            <Text style={styles.jobTitle}>Marketing-Managerin</Text>
-            <Text style={styles.locationTitle}>Berlin, Deutschland</Text>
+            <Text style={styles.jobTitle} lightColor={"#626262"} darkColor={"#f3f3f3"}>Marketing-Managerin</Text>
+            <Text style={styles.locationTitle} lightColor={"#494949"} darkColor={"#bbbbbb"}>Berlin, Deutschland</Text>
         </View>
     );
 }
@@ -33,10 +33,8 @@ const styles = StyleSheet.create({
     jobTitle: {
         marginTop: 10,
         fontSize: 16,
-        color: '#f3f3f3',
     },
     locationTitle: {
         fontSize: 16,
-        color: '#bbbbbb',
     }
 });
