@@ -1,14 +1,14 @@
-import { StyleSheet } from 'react-native';
+import { Button, StyleSheet } from 'react-native';
 
-import EditScreenInfo from '@/components/EditScreenInfo';
 import { Text, View } from '@/components/Themed';
+import QRPopup from '@/components/QRPopup'
 
 export default function TabOneScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tab One</Text>
+      <Text style={styles.title}>Startseite</Text>
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="app/(tabs)/index.tsx" />
+      <QRPopup />
     </View>
   );
 }
@@ -20,6 +20,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   title: {
+    marginTop: 30,
     fontSize: 20,
     fontWeight: 'bold',
   },
