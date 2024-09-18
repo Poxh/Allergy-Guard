@@ -19,6 +19,11 @@ export default function PopupInfoModal() {
             {/* Button */}
 
             <QRCodeScanner onScanned={function (data: string): void {
+                console.log(data);
+                
+            } }></QRCodeScanner>
+
+            <QRCodeScanner onScanned={function (data: string): void {
                 setModalVisible(true)
             } } />
 
