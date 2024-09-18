@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     bullet: {
         fontSize: 35,
         fontWeight: 'bold',
-        lineHeight: '38',
+        lineHeight: 38,
     },
     legend: {
         fontSize: 11,
