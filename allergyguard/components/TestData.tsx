@@ -11,7 +11,10 @@ const allergyStatus: { [key: string]: string } = {
   "Tomate": '#FF0000',  // Enthalten
   "Zwiebel": '#FF0000',  // Enthalten
   "Fleisch": '#FF0000',  // Enthalten
-  "Weizen": 'gold', // Kann Spuren enthalten
+  "Milch": '#FF0000',
+  "Weizen":'#FF0000',
+  "Eier": '#FF0000',
+  "Pfeffer": 'gold', // Kann Spuren enthalten
 };
 
 // get allergy color
