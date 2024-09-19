@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { Modal, Button, StyleSheet, View, Text, Pressable, Alert } from 'react-native';
+import { Modal, StyleSheet, View, Text, Pressable } from 'react-native';
 import TestData from '@/components/TestData';
 import Legend from '@/components/Legend';
 import { useColorScheme } from '@/components/useColorScheme';
 import QrCodeScanner from '@/components/QrCodeScanner';
-import { CameraView } from 'expo-camera';
 
 export default function PopupInfoModal() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -14,6 +13,7 @@ export default function PopupInfoModal() {
   const buttonBackgroundColor = colorScheme === 'dark' ? '#fff' : '#000';
   const buttonTextColor = colorScheme === 'dark' ? '#000' : '#fff';
   const modalbackground = colorScheme === 'dark' ? '#18191A' : '#fff';
+  const textColor = colorScheme === 'dark' ? '#fff' : '#000';
 
   const handleCloseModal = () => {
     setModalVisible(false);
@@ -22,20 +22,31 @@ export default function PopupInfoModal() {
 
   return (
     <View style={styles.centeredView}>
-      <QrCodeScanner
-        onScanned={(data) => {
-          setModalVisible(true);
-          // Pass the scanned data to the modal or perform any other necessary actions
-        }}
-        isScanned={isScanned}
-        setIsScanned={setIsScanned}
-      />
+      {!isScanned && (
+        <>
+          <Text style={[styles.description, { color: textColor }]}>
+            Scannen Sie den QR-Code des Gerichts
+          </Text>
+          <QrCodeScanner
+            onScanned={(data) => {
+              setModalVisible(true);
+              setIsScanned(true);
+              // Process the scanned data here
+            }}
+            isScanned={isScanned}
+            setIsScanned={setIsScanned}
+          />
+          <Text style={[styles.description, { color: textColor }]}>
+            Wir überprüfen, ob das Gericht basierend auf Ihren Allergien sicher ist
+          </Text>
+        </>
+      )}
 
       <Modal
         animationType="slide"
         transparent={true}
         visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
+        onRequestClose={handleCloseModal}
       >
         <View style={[styles.modalView, { backgroundColor: modalbackground }]}>
           <TestData path="app/(tabs)/index.tsx" />
@@ -51,7 +62,7 @@ export default function PopupInfoModal() {
               },
             ]}
           >
-            <Text style={[styles.termText, { color: buttonTextColor }]}>Close</Text>
+            <Text style={[styles.termText, { color: buttonTextColor }]}>Schließen</Text>
           </Pressable>
         </View>
       </Modal>
@@ -64,6 +75,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    padding: 20,
+  },
+  description: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginVertical: 20,
   },
   modalView: {
     margin: 20,
