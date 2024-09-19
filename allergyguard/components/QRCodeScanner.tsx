@@ -8,12 +8,13 @@ import {
   SafeAreaView,
   StatusBar,
   StyleSheet,
+  View,
 } from "react-native";
 import { Overlay } from "./Overlay";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import React from "react";
 
-export default function QrCodeScanner() {
+export default function QrCodeScanner({ onScanned, isScanned, setIsScanned }) {
   const qrLock = useRef(false);
   const appState = useRef(AppState.currentState);
 
@@ -33,26 +34,35 @@ export default function QrCodeScanner() {
     };
   }, []);
 
+  const handleBarCodeScanned = ({ data }) => {
+    if (!isScanned) {
+      setIsScanned(true);
+      onScanned(data);
+    }
+  };
+
   return (
-    <SafeAreaView style={StyleSheet.absoluteFillObject}>
-      <Stack.Screen
-        options={{
-          title: "Overview",
-          headerShown: false,
-        }}
-      />
-      {Platform.OS === "android" ? <StatusBar hidden /> : null}
+    <View style={styles.cameraContainer}>
       <CameraView
-        style={StyleSheet.absoluteFillObject}
+        style={styles.camera}
         facing="back"
         barcodeScannerSettings={{
           barcodeTypes: ["qr"],
         }}
-        onBarcodeScanned={({ data }) => {
-          Alert.alert("Scanned QR Code");
-        }}
+        onBarcodeScanned={handleBarCodeScanned}
       />
-      <Overlay />
-    </SafeAreaView>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  cameraContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  camera: {
+    width: 300,
+    height: 300,
+  },
+});
