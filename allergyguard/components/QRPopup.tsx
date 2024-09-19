@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Modal, Button, StyleSheet, View, Text, Pressable } from 'react-native';
 import TestData from '@/components/TestData';
 import Legend from '@/components/Legend';
-import QRCodeScanner from '@/components/QRCodeScanner';
 import { useColorScheme } from '@/components/useColorScheme'; // Verwende das gleiche Schema wie in _layout.tsx
+import QrCodeScanner from '@/components/QrCodeScanner';
 
 export default function PopupInfoModal() {
     const [modalVisible, setModalVisible] = useState(false);
@@ -18,14 +18,7 @@ export default function PopupInfoModal() {
         <View style={styles.centeredView}>
             {/* Button */}
 
-            <QRCodeScanner onScanned={function (data: string): void {
-                console.log(data);
-                
-            } }></QRCodeScanner>
-
-            <QRCodeScanner onScanned={function (data: string): void {
-                setModalVisible(true)
-            } } />
+            <QrCodeScanner />
 
             <Modal
                 animationType="slide"

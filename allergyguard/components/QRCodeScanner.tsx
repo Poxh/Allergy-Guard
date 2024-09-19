@@ -1,55 +1,58 @@
-import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Button } from 'react-native';
-import { CameraView, Camera } from 'expo-camera';
-import { BarCodeScanningResult } from 'expo-camera/build/legacy/Camera.types';
+import { Camera, CameraView } from "expo-camera";
+import { Stack } from "expo-router";
+import {
+  Alert,
+  AppState,
+  Linking,
+  Platform,
+  SafeAreaView,
+  StatusBar,
+  StyleSheet,
+} from "react-native";
+import { Overlay } from "./Overlay";
+import { useEffect, useRef } from "react";
+import React from "react";
 
-interface QRCodeScannerProps {
-  onScanned: (data: string) => void;
-}
-
-export default function QRCodeScanner({ onScanned }: QRCodeScannerProps) {
-  const [hasPermission, setHasPermission] = useState(false);
-  const [scanned, setScanned] = useState(false);
+export default function QrCodeScanner() {
+  const qrLock = useRef(false);
+  const appState = useRef(AppState.currentState);
 
   useEffect(() => {
-    const getCameraPermissions = async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === 'granted');
-    };
+    const subscription = AppState.addEventListener("change", (nextAppState) => {
+      if (
+        appState.current.match(/inactive|background/) &&
+        nextAppState === "active"
+      ) {
+        qrLock.current = false;
+      }
+      appState.current = nextAppState;
+    });
 
-    getCameraPermissions();
+    return () => {
+      subscription.remove();
+    };
   }, []);
 
-  const handleBarcodeScanned = ({ type, data }: BarCodeScanningResult) => {
-    setScanned(true);
-    onScanned(data);
-  };
-
-  if (hasPermission === null) {
-    return <Text>Requesting for camera permission</Text>;
-  }
-  if (hasPermission === false) {
-    return <Text>No access to camera</Text>;
-  }
-
   return (
-    <View style={styles.container}>
-      <CameraView
-        onBarcodeScanned={scanned ? undefined : handleBarcodeScanned}
-        barcodeScannerSettings={{
-          barcodeTypes: ['qr'],
+    <SafeAreaView style={StyleSheet.absoluteFillObject}>
+      <Stack.Screen
+        options={{
+          title: "Overview",
+          headerShown: false,
         }}
-        style={StyleSheet.absoluteFillObject}
       />
-      {scanned && <Button title={'Tap to Scan Again'} onPress={() => setScanned(false)} />}
-    </View>
+      {Platform.OS === "android" ? <StatusBar hidden /> : null}
+      <CameraView
+        style={StyleSheet.absoluteFillObject}
+        facing="back"
+        barcodeScannerSettings={{
+          barcodeTypes: ["qr"],
+        }}
+        onBarcodeScanned={({ data }) => {
+          Alert.alert("Scanned QR Code");
+        }}
+      />
+      <Overlay />
+    </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'center',
-  },
-});
