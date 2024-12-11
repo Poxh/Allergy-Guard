@@ -57,24 +57,6 @@ export default function RootLayout() {
     if (loaded) {
       SplashScreen.hideAsync();
     }
-
-    const createTableAndInsertDocument = async () => {
-      try {
-        // Reference to the Firestore collection (table)
-        const collectionRef = collection(db, "exampleTable"); // "exampleTable" is the name of your table
-
-        // Add a document with the key "hello" and value "world"
-        const docRef = await addDoc(collectionRef, {
-          hello: "world",
-        });
-
-        console.log("Document written with ID:", docRef.id);
-      } catch (error) {
-        console.error("Error adding document:", error);
-      }
-    };
-
-    createTableAndInsertDocument();
   }, [loaded]);
 
   if (!loaded) {
