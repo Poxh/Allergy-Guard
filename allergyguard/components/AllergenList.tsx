@@ -1,20 +1,47 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ScrollView, TouchableOpacity, Text, View, StyleSheet, Dimensions } from 'react-native';
+import { getFirestore, collection, getDocs } from 'firebase/firestore';
+import { db } from '@/app/_layout'; // db ist in _layout.tsx definiert und exportiert
 
 // Die Allergendaten können als Prop übergeben werden
 interface AllergenListProps {
-  allergenes: string[];
+  refreshKey?: number; // Ein Schlüssel, um die Liste zu aktualisieren
+  onSelectionChange: (selectedAllergenes: string[]) => void; // Callback für die Auswahländerung
 }
 
-const AllergenList: React.FC<AllergenListProps> = ({ allergenes }) => {
+const AllergenList: React.FC<AllergenListProps> = ({ refreshKey, onSelectionChange }) => {
+  const [allergenes, setAllergenes] = useState<string[]>([]);
   const [selectedAllergenes, setSelectedAllergenes] = useState<string[]>([]);
 
+  useEffect(() => {
+    const fetchAllergenes = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'allergene'));
+        const allergenList: string[] = [];
+        querySnapshot.forEach((doc) => {
+          const allergenData = doc.data();
+          if (allergenData && allergenData.name) {
+            allergenList.push(allergenData.name);
+          }
+        });
+        setAllergenes(allergenList);
+      } catch (error) {
+        console.error('Fehler beim Abrufen der Allergene:', error);
+      }
+    };
+
+    fetchAllergenes();
+  }, [refreshKey]); // Aktualisiere die Liste, wenn refreshKey sich ändert
+
   const toggleAllergen = (allergen: string) => {
+    let updatedSelection;
     if (selectedAllergenes.includes(allergen)) {
-      setSelectedAllergenes(selectedAllergenes.filter(item => item !== allergen));
+      updatedSelection = selectedAllergenes.filter(item => item !== allergen);
     } else {
-      setSelectedAllergenes([...selectedAllergenes, allergen]);
+      updatedSelection = [...selectedAllergenes, allergen];
     }
+    setSelectedAllergenes(updatedSelection);
+    onSelectionChange(updatedSelection);
   };
 
   // Berechnung der Höhe: 1/4 der Bildschirmhöhe
@@ -22,29 +49,29 @@ const AllergenList: React.FC<AllergenListProps> = ({ allergenes }) => {
   const allergenContainerHeight = screenHeight * 0.25;
 
   return (
-    <View style={[styles.allergenContainer, { height: allergenContainerHeight }]}>
-      <ScrollView contentContainerStyle={styles.allergenList}>
-        {allergenes.map((allergen, index) => (
-          <TouchableOpacity
-            key={index}
-            style={[
-              styles.allergenButton,
-              selectedAllergenes.includes(allergen) ? styles.selectedAllergen : null
-            ]}
-            onPress={() => toggleAllergen(allergen)}
-          >
-            <Text
-              style={[
-                styles.allergenText,
-                selectedAllergenes.includes(allergen) ? { color: '#fff' } : { color: '#000' }
-              ]}
-            >
-              {allergen}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-    </View>
+      <View style={[styles.allergenContainer, { height: allergenContainerHeight }]}>
+        <ScrollView contentContainerStyle={styles.allergenList}>
+          {allergenes.map((allergen, index) => (
+              <TouchableOpacity
+                  key={index}
+                  style={[
+                    styles.allergenButton,
+                    selectedAllergenes.includes(allergen) ? styles.selectedAllergen : null
+                  ]}
+                  onPress={() => toggleAllergen(allergen)}
+              >
+                <Text
+                    style={[
+                      styles.allergenText,
+                      selectedAllergenes.includes(allergen) ? { color: '#fff' } : { color: '#000' }
+                    ]}
+                >
+                  {allergen}
+                </Text>
+              </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
   );
 };
 

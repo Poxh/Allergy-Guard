@@ -3,7 +3,7 @@ import { Modal, StyleSheet, View, Text, Pressable } from 'react-native';
 import TestData from '@/components/TestData';
 import Legend from '@/components/Legend';
 import { useColorScheme } from '@/components/useColorScheme';
-import QrCodeScanner from '@/components/QrCodeScanner';
+import QrCodeScanner from "@/components/QRCodeScanner";
 
 export default function PopupInfoModal() {
   const [modalVisible, setModalVisible] = useState(false);
